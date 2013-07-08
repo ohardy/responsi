@@ -1,0 +1,688 @@
+@import '../global'
+
+/*
+ * Vendor "display: flex" support with fallback to obsolete versions.
+ */
+
+flex-version ?= box flex
+
+//
+// 1. Display values
+//    - http://www.w3.org/TR/css3-flexbox/#flex-containers
+//
+display(type, args...)
+  if flex == type || inline-flex == type
+    display vendor-value(box args, only: moz webkit) if box in flex-version
+    display -ms-flexbox
+    display vendor-value(arguments, only: webkit official) if flex in flex-version // overwrites old webkit
+  else
+    display arguments
+
+/*
+ * New syntax for browsers like Google Chrome.
+ * Plus a translation to the old syntax, if possible.
+ */
+
+
+//
+// 5. Ordering and Orientation
+//    - http://www.w3.org/TR/css3-flexbox/#ordering-and-orientation
+//
+-flex-obsolete-direction(direction)
+  if box in flex-version
+    if row-reverse == direction || column-reverse == direction
+      vendor('box-direction', reverse, ignore: official)
+
+    if row == direction || row-reverse == direction
+      vendor('box-orient', horizontal, ignore: official)
+    else if column == direction || column-reverse == direction
+      vendor('box-orient', vertical, ignore: official)
+
+-flex-obsolete-wrap(value)
+  if box in flex-version
+    // WARN: wrap-reverse does not have a box equivalent. This will render in different manners
+    //    on box vs. flex values.
+    if 'wrap' == value || wrap-reverse == value
+      vendor('box-lines', multiple, ignore: official)
+    else if nowrap == value
+      vendor('box-lines', single, ignore: official)
+
+flex-direction(direction)
+  // obsolete
+  -flex-obsolete-direction(direction)
+
+  // new
+  if flex in flex-version
+    vendor('flex-direction', arguments, only: webkit moz ms official)
+
+flex-wrap(value)
+  // obsolete
+  -flex-obsolete-wrap(value)
+
+  if flex in flex-version
+    vendor('flex-wrap', arguments, only: webkit moz ms official)
+
+flex-flow()
+  // obsolete
+  -flex-obsolete-direction(arguments[0])
+  -flex-obsolete-direction(arguments[1])
+  -flex-obsolete-wrap(arguments[0])
+  -flex-obsolete-wrap(arguments[1])
+
+  // new
+  if flex in flex-version
+    vendor('flex-flow', arguments, only: webkit moz ms official)
+
+order()
+  // obsolete
+  if box in flex-version
+    vendor('box-ordinal-group', arguments, ignore: official)
+
+  // new
+  if flex in flex-version
+    vendor('order', arguments, only: webkit moz ms official)
+
+
+//
+// 7. Flexibility
+//    - http://www.w3.org/TR/css3-flexbox/#flexibility
+//
+flex-grow(growth)
+  // obsolete
+  if box in flex-version
+    vendor('box-flex', growth)
+
+  // new
+  if flex in flex-version
+    vendor('flex-grow', arguments, only: webkit moz ms official)
+
+flex-basis()
+  if flex in flex-version
+    vendor('flex-basis', arguments, only: webkit moz ms official)
+
+flex-shrink()
+  if flex in flex-version
+    vendor('flex-shrink', arguments, only: webkit moz ms official)
+
+flex(growth)
+
+  // obsolete
+  if box in flex-version
+    shrink = 1
+
+    if none == growth || initial == growth
+      // Well known values
+      shrink = 0 if none == growth
+      growth = 0
+    else if is-width(growth) == true
+      // Basis is defined as the first parameter
+      growth = arguments[1] || 0
+      shrink = arguments[2] if 3 <= length(arguments)
+    else if arguments[1] && is-width(arguments[1]) == false
+      // Growth is first and shrink is second
+      shrink = arguments[1]
+
+    // Since we can't make the distinction between growing and shrinking in the box model, take
+    // the one that provides the most flexibility.
+    box-flex max(growth, shrink)
+
+  // new
+  if flex in flex-version
+    vendor('flex', arguments, only: webkit moz ms official)
+
+//
+// 8. Alignment
+//    - http://www.w3.org/TR/css3-flexbox/#alignment
+//
+justify-content(align)
+  // obsolete
+  if box in flex-version
+    if flex-start == align
+      align = start
+    else if flex-end == align
+      align = end
+    else if space-around == align || space-between == align
+      // WARN: space-around does not match exactly to the align pack method but this is the
+      //    closest option available.
+      align = justify
+    vendor('box-pack', align, ignore: official)
+
+  // new
+  if flex in flex-version
+    vendor('justify-content', arguments, only: webkit moz ms official)
+
+align-items(align)
+  // obsolete
+  if box in flex-version
+    if flex-start == align
+      align = start
+    else if flex-end == align
+      align = end
+    vendor('box-align', align, ignore: official)
+
+  // new
+  if flex in flex-version
+    vendor('align-items', arguments, only: webkit moz ms official)
+
+align-self()
+  // WARN: Obsolete spec does not allow for overriding alignment on individual items.
+  if flex in flex-version
+    vendor('align-self', arguments, only: webkit moz ms official)
+
+align-content()
+  // WARN: Obsolete spec does not allow for adjustment here
+  if flex in flex-version
+    vendor('align-content', arguments, only: webkit moz ms official)
+
+/*
+ * Alias "nowrap" as "no-wrap".
+ */
+
+no-wrap = unquote('nowrap')
+
+/*
+ * Vendor support for the given prop / arguments,
+ * optionally specifying the only prefixes to utilize,
+ * or those which should be ignored.
+ */
+
+vendor(prop, args, only = null, ignore = null)
+  for prefix in $vendor-prefixes
+    unless (only and !(prefix in only)) or (ignore and prefix in ignore)
+      if official == prefix
+        {prop} args
+      else
+        newargs = args
+        // Adjusting the args if needed
+        if prop in ('transition' 'transition-property')
+          newargs = replace-args(args, transform, '-' + prefix + '-transform')
+        {'-' + prefix + '-' + prop}: newargs
+
+/*
+ * Vendorize the given value.
+ */
+
+vendor-value(arg, only = null, ignore = null)
+  prop = current-property[0]
+  for prefix in $vendor-prefixes
+    unless (only and !(prefix in only)) or (ignore and prefix in ignore) or official == prefix
+      add-property(prop, '-%s-%s' % (prefix arg))
+  arg
+
+/*
+ * Vendor "box-shadow" support.
+ */
+
+box-shadow()
+  vendor('box-shadow', arguments, only: webkit official)
+
+/*
+ * Vendor "user-select" support.
+ */
+
+user-select()
+  vendor('user-select', arguments, only: webkit moz ms official)
+
+/*
+ * Vendor "column-count" support.
+ */
+
+column-count()
+  vendor('column-count', arguments, only: webkit moz official)
+
+/*
+ * Vendor "column-gap" support.
+ */
+
+column-gap()
+  vendor('column-gap', arguments, only: webkit moz official)
+
+/*
+ * Vendor "column-rule" support.
+ */
+
+column-rule()
+  vendor('column-rule', arguments, only: webkit moz official)
+
+/*
+ * Vendor "column-rule-color" support.
+ */
+
+column-rule-color()
+  vendor('column-rule-color', arguments, only: webkit moz official)
+
+/*
+ * Vendor "column-rule-width" support.
+ */
+
+column-rule-width()
+  vendor('column-rule-width', arguments, only: webkit moz official)
+
+/*
+ * Vendor "column-rule-style" support.
+ */
+
+column-rule-style()
+  vendor('column-rule-style', arguments, only: webkit moz official)
+
+/*
+ * Vendor "column-width" support.
+ */
+
+column-width()
+  vendor('column-width', arguments, only: webkit moz official)
+
+/*
+ * Vendor "column-span" support.
+ */
+
+column-span()
+  vendor('column-span', arguments, only: webkit official)
+
+/*
+ * Vendor "column-fill" support.
+ */
+
+column-fill()
+  vendor('column-fill', arguments, only: moz)
+
+/*
+ * Legacy syntax support for background-clip and background-origin
+ */
+
+legacy-bg-values(property, args)
+  legacy_args = ()
+  importance = unquote('')
+  for subargs in args
+    for arg in subargs
+      if arg in (border-box padding-box content-box)
+        arg = unquote('border')  if arg == border-box
+        arg = unquote('padding') if arg == padding-box
+        arg = unquote('content') if arg == content-box
+      if arg != '!important'
+        push(legacy_args,arg)
+      else
+        importance = !important
+  vendor(property, unquote(join(', ',legacy_args)) importance, only: moz webkit)
+
+/*
+ * Vendor "background-clip" support.
+ */
+
+background-clip()
+  if arguments[0] == text
+    vendor('background-clip', arguments, only: webkit)
+  else
+    legacy-bg-values('background-clip', arguments)
+    background-clip arguments
+
+/*
+ * Vendor "background-origin" support.
+ */
+
+background-origin()
+  legacy-bg-values('background-origin', arguments)
+  background-origin arguments
+
+/*
+ * Vendor "background-size" support.
+ */
+
+background-size()
+  vendor('background-size', arguments, only: webkit moz official)
+
+/*
+ * Vendor "transform" support.
+ */
+
+transform()
+  vendor('transform', arguments)
+
+/*
+ * Vendor "transform-origin" support.
+ */
+transform-origin()
+    vendor('transform-origin', arguments)
+
+/*
+ * Vendor "transform-style" support.
+ */
+
+transform-style()
+  vendor('transform-style', arguments)
+
+/*
+ * Vendor "border-image" support.
+ */
+
+border-image()
+  vendor('border-image', arguments, only: webkit moz o official)
+
+/*
+ * Vendor "transition" support.
+ */
+
+transition()
+  vendor('transition', arguments)
+
+/*
+ * Vendor "transition-property" support.
+ */
+
+transition-property()
+  vendor('transition-property', arguments)
+
+/*
+ * Vendor "transition-duration" support.
+ */
+
+transition-duration()
+  vendor('transition-duration', arguments)
+
+/*
+ * Vendor "transition-timing-function" support.
+ */
+
+transition-timing-function()
+  vendor('transition-timing-function', arguments)
+
+/*
+ * Vendor "transition-delay" support.
+ */
+
+transition-delay()
+  vendor('transition-delay', arguments)
+
+/*
+ * Vendor "backface-visibility" support.
+ */
+
+backface-visibility()
+  vendor('backface-visibility', arguments, only: webkit moz ms official)
+
+/*
+ * Vendor "perspective" support.
+ */
+
+perspective()
+  if mixin
+    vendor('perspective', arguments, only: webkit moz ms official)
+  else
+    'perspective(%s)' % arguments
+
+/*
+ * Vendor "perspective-origin" support.
+ */
+
+perspective-origin()
+  vendor('perspective-origin', arguments, only: webkit moz ms official)
+
+/*
+ * Opacity with conditional IE support.
+ */
+
+opacity(n, args...)
+  opacity: n args
+  if support-for-ie
+    val = round(n * 100)
+    if val == 100
+      -ms-filter none
+      filter none
+    else
+      filter 'alpha(opacity=%s)' % val args
+      -ms-filter '"progid:DXImageTransform.Microsoft.Alpha(Opacity=%s)"' % val args
+
+/*
+ * Vendor "text-size-adjust"
+ */
+
+text-size-adjust()
+  vendor('text-size-adjust', arguments)
+
+/*
+ * Alias the "white-space" property.
+ */
+
+whitespace()
+  white-space: arguments
+
+/*
+ * Vendor "box-sizing" support.
+ */
+
+box-sizing()
+  vendor('box-sizing', arguments, only: webkit moz official)
+
+/*
+ * Vendor "box-orient" support.
+ */
+
+box-orient()
+  vendor('box-orient', arguments, only: webkit moz ms official)
+
+/*
+ * Vendor "box-flex" support.
+ */
+
+box-flex()
+  vendor('box-flex', arguments, only: webkit moz o ms official)
+
+/*
+ * Vendor "box-flex-group" support.
+ */
+
+box-flex-group()
+  vendor('box-flex-group', arguments, only: webkit moz official)
+
+/*
+ * Vendor "box-ordinal-group" support.
+ */
+
+box-ordinal-group()
+  vendor('box-ordinal-group', arguments, only: webkit moz ms official)
+
+
+/*
+ * Vendor "box-align" support.
+ */
+
+box-align()
+  vendor('box-align', arguments, only: webkit moz ms official)
+
+/*
+ * Vendor "box-pack" support.
+ */
+
+box-pack()
+  vendor('box-pack', arguments, only: webkit moz ms official)
+
+/*
+ * Vendor "box-direction" support.
+ */
+
+box-direction()
+  vendor('box-direction', arguments, only: webkit moz ms official)
+
+/*
+ * Vendor "animation" support.
+ */
+
+animation()
+  vendor('animation', arguments)
+
+
+/*
+ * Vendor "animation-name" support.
+ */
+
+animation-name()
+  vendor('animation-name', arguments)
+
+/*
+ * Vendor "animation-duration" support.
+ */
+
+animation-duration()
+  vendor('animation-duration', arguments)
+
+/*
+ * Vendor "animation-delay" support.
+ */
+
+animation-delay()
+  vendor('animation-delay', arguments)
+
+/*
+ * Vendor "animation-direction" support.
+ */
+
+animation-direction()
+  vendor('animation-direction', arguments)
+
+/*
+ * Vendor "animation-iteration-count" support.
+ */
+
+animation-iteration-count()
+  vendor('animation-iteration-count', arguments)
+
+/*
+ * Vendor "animation-timing-function" support.
+ */
+
+animation-timing-function()
+  vendor('animation-timing-function', arguments)
+
+/*
+ * Vendor "animation-play-state" support.
+ */
+
+animation-play-state()
+  vendor('animation-play-state', arguments)
+
+/*
+ * Vendor "animation-fill-mode" support.
+ */
+
+animation-fill-mode()
+  vendor('animation-fill-mode', arguments)
+
+/*
+ * Vendor "hyphens" support.
+ */
+
+hyphens()
+  vendor('hyphens', arguments, only: webkit moz ms official)
+
+/*
+ * Vendor "appearance" support.
+ */
+
+appearance()
+  vendor('appearance', arguments, only: webkit moz official)
+
+/*
+ * Vendor "tab-size" support.
+ */
+
+tab-size()
+  vendor('tab-size', arguments, only: moz o)
+
+/*
+ * Vendor "overflow-scrolling" support.
+ */
+
+overflow-scrolling()
+  vendor('overflow-scrolling', arguments, only: webkit official)
+
+/*
+ * Vendor "text-overflow" support, , -o- for opera 9.* - 10.*
+ */
+
+text-overflow()
+  vendor('text-overflow', arguments, only: official o)
+
+/*
+ * Vendor "text-size-adjust" support.
+ */
+text-size-adjust()
+  vendor('text-size-adjust', arguments, only: official webkit ms)
+
+/*
+ * Vendor "font-smoothing" support, webkit only.
+ */
+font-smoothing()
+  vendor('font-smoothing', arguments, only: webkit)
+
+/*
+ * Vendor "columns" support, webkit only.
+ */
+columns()
+  vendor('columns', arguments, only: official webkit ms)
+
+/*
+ * Vendor "columns" support, webkit only.
+ */
+column-width()
+  vendor('column-width', arguments, only: official webkit ms)
+
+/*
+ * Vendor "columns" support, webkit only.
+ */
+column-count()
+  vendor('column-count', arguments, only: official webkit ms)
+
+/*
+ * Helper for border-radius().
+ */
+
+-apply-border-radius(pos, importance)
+  if length(pos) == 3
+    // border-radius: <top | buttom> <left | right> <n>
+    y = pos[0]
+    x = pos[1]
+    // We don't use moz for simple boder-radius anymore
+    // vendor('border-radius-%s%s' % pos, pos[2], only: moz)
+    vendor('border-%s-%s-radius' % pos, pos[2] importance, only: webkit official)
+  else if pos[0] in (top bottom)
+    // border-radius: <top | bottom> <n>
+    -apply-border-radius(pos[0] left pos[1], importance)
+    -apply-border-radius(pos[0] right pos[1], importance)
+  else if pos[0] in (left right)
+    // border-radius: <left | right> <n>
+    unshift(pos, top);
+    -apply-border-radius(pos, importance)
+    pos[0] = bottom
+    -apply-border-radius(pos, importance)
+
+/*
+ * border-radius supporting vendor prefixes and
+ * augmented behavior.
+ *
+ * Examples:
+ *
+ *    border-radius: 2px 5px
+ *    border-radius: top 5px bottom 10px
+ *    border-radius: left 5px
+ *    border-radius: top left 5px
+ *    border-radius: top left 10px bottom right 5px
+ *    border-radius: top left 10px, bottom right 5px
+ *
+ */
+
+border-radius()
+  pos = ()
+  augmented = false
+  importance = arguments[length(arguments) - 1] == !important ? !important : unquote('')
+
+  for args in arguments
+    for arg in args
+      if arg is a 'ident'
+        append(pos, arg)
+        augmented = true
+      else
+        append(pos, arg)
+        if augmented
+          -apply-border-radius(pos, importance)
+          pos = ()
+  vendor('border-radius', pos, only: webkit official) unless augmented

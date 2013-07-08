@@ -1,0 +1,39 @@
+@import '../global'
+
+border-generator($side, $color, $args)
+  if $color is a 'color'
+    border{$side} 1px solid $color $args
+  else
+    border{$side} $color $args
+
+border($color, $args...)
+  border-generator('', $color, $args)
+
+border-top($color, $args...)
+  border-generator('-top', $color, $args)
+
+border-right($color, $args...)
+  border-generator('-right', $color, $args)
+
+border-bottom($color, $args...)
+  border-generator('-bottom', $color, $args)
+
+border-left($color, $args...)
+  border-generator('-left', $color, $args)
+
+// font-size($value, args...)
+//   p($value, unit($value))
+//   if unit($value) == 'px'
+//     font-size unit(round($value / 16), 'em')
+//   else
+//     font-size arguments
+
+clearfix()
+  &:before
+  &:after
+    content: ""
+    display table
+  &:after
+    clear both
+  zoom: 1 if $support-for-ie
+

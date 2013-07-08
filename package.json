@@ -1,0 +1,16 @@
+{
+  "author": "Olivier Hardy",
+  "name": "responsi",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "stylus": "*"
+  },
+  "devDependencies": {
+    "async": "*",
+    "mocha": "*",
+    "should": "*",
+    "coffee-script": "*",
+    "nodemon": "*"
+  }
+}

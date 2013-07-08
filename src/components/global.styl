@@ -1,0 +1,48 @@
+$support-for-ie  ?= true
+$vendor-prefixes ?= webkit moz o ms official
+$is-prototype    ?= false
+
+$em-base ?= 16px
+
+// We use this to control font-smoothing
+$font-smoothing ?= antialiased
+
+// We use these to control text direction settings
+$text-direction   ?= ltr // Controls default global text direction, 'rtl' or 'ltr'
+$default-float    ?= left
+$default-opposite ?= right
+// No need to change this conditional statement, $text-direction variable controls it all.
+
+if $text-direction == ltr
+  $default-float    = left
+  $default-opposite = right
+else
+  $default-float    = right
+  $default-opposite = left
+
+to-em($px)
+  unit(($px / $em-base) * 1em, 'em')
+
+percentage(first, second)
+  unit((first / second) * 100, '%')
+
+// Creating rems and pixels
+rem-calc($pxWidth)
+  @return $pxWidth / $em-base * 1rem;
+
+// Grid Calculation for Percentages
+gridCalc($colNumber, $totalColumns)
+  percentage($colNumber, $totalColumns)
+
+// // Media Queries
+$small-screen  ?= to-em(768px)
+$medium-screen ?= to-em(1280px)
+$large-screen  ?= to-em(1440px)
+
+$small  ?= "only screen and (min-width:" + $small-screen + ")"
+$medium ?= "only screen and (min-width:" + $medium-screen + ")"
+$large  ?= "only screen and (min-width:" + $large-screen + ")"
+
+$max-small  ?= "only screen and (max-width:" + $small-screen + ")"
+$max-medium ?= "only screen and (max-width:" + $medium-screen + ")"
+$max-large  ?= "only screen and (max-width:" + $large-screen + ")"
