@@ -15,7 +15,22 @@ $clearfix
     zoom 1
 
 grid-row($width = 100, $prefix = false, $suffix = false, $push = false, $pull = false)
-  $width = unit($width, '%')
+
+  if $width
+    $width = unit($width, '%')
+
+  if $prefix
+    $prefix = unit($prefix + 1, '%')
+
+  if $suffix
+    $suffix = unit($suffix + 1, '%')
+
+  if $push
+    $push = unit($push + 1, '%')
+
+  if $pull
+    $pull = unit($pull + 1, '%')
+
   // p($width, typeof($width))
   if $width == 100%
     @extend $clearfix
@@ -29,19 +44,22 @@ grid-row($width = 100, $prefix = false, $suffix = false, $push = false, $pull = 
     // if $ie7-support
     //   *width: expression(Math.floor({$decimal} * (this.parentNode.offsetWidth - parseFloat(this.parentNode.currentStyle.paddingLeft) - parseFloat(this.parentNode.currentStyle.paddingRight))) + "px")
 
-    if $prefix
-      margin-{$default-float} $percent
+    if $prefix is not false or $suffix is not false or $push is not false or $pull is not false
+      position relative
 
-    if $suffix
-      margin-{$reverse-float} $percent
+    if $prefix is not false
+      margin-{$default-float} $prefix
 
-    if $push
-      {$default-float} $percent
+    if $suffix is not false
+      margin-{$reverse-float} $suffix
+
+    if $push is not false
+      {$default-float} $push
 
       // if $ie7-support
       //   *{$default-float}: expression(Math.floor({$decimal} * (this.parentNode.offsetWidth - parseFloat(this.parentNode.currentStyle.paddingLeft) - parseFloat(this.parentNode.currentStyle.paddingRight))) + "px")
 
-    if $pull
+    if $pull is not false
       {$default-float}: ($width * -1)
 
       // if $ie7-support
