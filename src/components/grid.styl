@@ -33,12 +33,13 @@ grid-row($width = 100, $prefix = false, $suffix = false, $push = false, $pull = 
 
   // p($width, typeof($width))
   if $width == 100%
-    @extend $clearfix
+    clearfix()
     clear both
     width $width
   else
     $decimal = ($width / 100)
-    @extend $grid-row
+    // @extend $grid-row
+    float $default-float
     width $width
 
     // if $ie7-support
