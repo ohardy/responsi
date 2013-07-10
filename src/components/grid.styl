@@ -1,111 +1,170 @@
 @import 'global'
 
-//
-// Variables
-//
+$default-float ?= left
+$reverse-float ?= right
 
-// $grid-row-width     ?= 62.5em
-// $grid-column-gutter ?= 1.875em
+$ie7-support ?= true
 
-$grid-total-columns ?= 12
+$grid-row
+  float $default-float
 
-//
-// Grid Mixins
-//
-
-grid-row($margin-top = 0, $margin-bottom = 0)
-  margin $margin-top auto $margin-bottom auto
-
-  width      100%
-  max-width  100%
-
+$clearfix
   clearfix()
 
-grid-column($columns = false, $center = false, $offset = false)
-  position relative
+  if $ie7-support
+    zoom 1
 
-  if $columns
-    width gridCalc($columns, $grid-total-columns)
+grid-row($width = 100, $prefix = false, $suffix = false, $push = false, $pull = false)
+  $width = unit($width, '%')
+  // p($width, typeof($width))
+  if $width == 100%
+    @extend $clearfix
+    clear both
+    width $width
+  else
+    $decimal = ($width / 100)
+    @extend $grid-row
+    width $width
 
-    if $columns == $grid-total-columns
-      float $default-float
-    else
-      padding-left 0
-      padding-right 0
+    // if $ie7-support
+    //   *width: expression(Math.floor({$decimal} * (this.parentNode.offsetWidth - parseFloat(this.parentNode.currentStyle.paddingLeft) - parseFloat(this.parentNode.currentStyle.paddingRight))) + "px")
 
-  if $center
-    margin-left auto
-    margin-right auto
+    if $prefix
+      margin-{$default-float} $percent
 
-  // If offset, calculate appropriate margins
-  if $offset
-    margin-{$default-float}: gridCalc($offset, $grid-total-columns)
+    if $suffix
+      margin-{$reverse-float} $percent
 
-if $is-prototype
-  .row
-    grid-row()
+    if $push
+      {$default-float} $percent
 
-    .column,
-    .columns
-      grid-column($columns:$grid-total-columns)
+      // if $ie7-support
+      //   *{$default-float}: expression(Math.floor({$decimal} * (this.parentNode.offsetWidth - parseFloat(this.parentNode.currentStyle.paddingLeft) - parseFloat(this.parentNode.currentStyle.paddingRight))) + "px")
 
-    // &.collapse
-    //   .column,
-    //   .columns
-    //     grid-column($collapse:true)
+    if $pull
+      {$default-float}: ($width * -1)
 
-    .row
-      grid-row()
-      // &.collapse
-      //   grid-row($behavior:nest-collapse)
+      // if $ie7-support
+      //   *{$default-float} s('expression(Math.floor(%s * (this.parentNode.offsetWidth - parseFloat(this.parentNode.currentStyle.paddingLeft) - parseFloat(this.parentNode.currentStyle.paddingRight))) + "px")', $decimal * -1)
 
-  @media only screen
 
-    .row .column,
-    .row .columns
-      grid-column($columns:false)
 
-    for $i in 1..$grid-total-columns
-      .row .small-{$i}
-        grid-column($columns:$i)
 
-    for $i in 1..($grid-total-columns - 2)
-      .row .small-offset-{$i}
-        grid-column($offset:$i)
 
-    // [class*="column"] + [class*="column"]:last-child
-    //   float: $default-opposite
-    // [class*="column"] + [class*="column"].end
-    //   float: $default-float
 
-    // .column.small-centered,
-    // .columns.small-centered
-    //   grid-column($center:true, $collapse:null, $float:none)
 
-  /* Styles for screens that are atleast 768px */
-  // $small
-  @media $small
 
-    for $i in 1..$grid-total-columns
-      .row .large-{$i}
-        grid-column($columns:$i)
 
-    for $i in (1..$grid-total-columns - 2)
-      .row .large-offset-{$i}
-        grid-column($offset:$i)
 
-    // for $i in 2..($grid-total-columns - 2)
-    //   .push-{$i}
-    //     grid-column($push:$i, $collapse:null)
-    //   .pull-{$i}
-    //     grid-column($pull:$i, $collapse:null)
 
-    // for $i in (2..$grid-total-columns - 2)
-    //   .small-push-{$i}
-    //     left: inherit
-    //   .small-pull-{$i}
-    //     right: inherit
 
-    // .column.large-centered,
-    // .columns.large-centered
-    //   grid-column($center:true, $collapse:null, $float:none)
+
+// //
+// // Variables
+// //
+
+// // $grid-row-width     ?= 62.5em
+// // $grid-column-gutter ?= 1.875em
+
+// $grid-total-columns ?= 12
+
+// //
+// // Grid Mixins
+// //
+
+// grid-row($margin-top = 0, $margin-bottom = 0)
+//   margin $margin-top auto $margin-bottom auto
+
+//   width      100%
+//   max-width  100%
+
+//   clearfix()
+
+// grid-column($columns = false, $center = false, $offset = false)
+//   position relative
+
+//   if $columns
+//     width gridCalc($columns, $grid-total-columns)
+
+//     if $columns == $grid-total-columns
+//       float $default-float
+//     else
+//       padding-left 0
+//       padding-right 0
+
+//   if $center
+//     margin-left auto
+//     margin-right auto
+
+//   // If offset, calculate appropriate margins
+//   if $offset
+//     margin-{$default-float}: gridCalc($offset, $grid-total-columns)
+
+// if $is-prototype
+//   .row
+//     grid-row()
+
+//     .column,
+//     .columns
+//       grid-column($columns:$grid-total-columns)
+
+//     // &.collapse
+//     //   .column,
+//     //   .columns
+//     //     grid-column($collapse:true)
+
+//     .row
+//       grid-row()
+//       // &.collapse
+//       //   grid-row($behavior:nest-collapse)
+
+//   @media only screen
+
+//     .row .column,
+//     .row .columns
+//       grid-column($columns:false)
+
+//     for $i in 1..$grid-total-columns
+//       .row .small-{$i}
+//         grid-column($columns:$i)
+
+//     for $i in 1..($grid-total-columns - 2)
+//       .row .small-offset-{$i}
+//         grid-column($offset:$i)
+
+//     // [class*="column"] + [class*="column"]:last-child
+//     //   float: $default-opposite
+//     // [class*="column"] + [class*="column"].end
+//     //   float: $default-float
+
+//     // .column.small-centered,
+//     // .columns.small-centered
+//     //   grid-column($center:true, $collapse:null, $float:none)
+
+//   /* Styles for screens that are atleast 768px */
+//   // $small
+//   @media $small
+
+//     for $i in 1..$grid-total-columns
+//       .row .large-{$i}
+//         grid-column($columns:$i)
+
+//     for $i in (1..$grid-total-columns - 2)
+//       .row .large-offset-{$i}
+//         grid-column($offset:$i)
+
+//     // for $i in 2..($grid-total-columns - 2)
+//     //   .push-{$i}
+//     //     grid-column($push:$i, $collapse:null)
+//     //   .pull-{$i}
+//     //     grid-column($pull:$i, $collapse:null)
+
+//     // for $i in (2..$grid-total-columns - 2)
+//     //   .small-push-{$i}
+//     //     left: inherit
+//     //   .small-pull-{$i}
+//     //     right: inherit
+
+//     // .column.large-centered,
+//     // .columns.large-centered
+//     //   grid-column($center:true, $collapse:null, $float:none)
