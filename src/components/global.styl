@@ -3,6 +3,7 @@ $vendor-prefixes ?= webkit moz o ms official
 $is-prototype    ?= false
 
 $em-base ?= 16px
+$use-rem ?= false
 
 // We use this to control font-smoothing
 $font-smoothing ?= antialiased
@@ -11,14 +12,25 @@ $font-smoothing ?= antialiased
 $text-direction   ?= ltr // Controls default global text direction, 'rtl' or 'ltr'
 $default-float    ?= left
 $default-opposite ?= right
+
+$leading-edge     ?= before
+$trailing-edge   ?= after
+
 // No need to change this conditional statement, $text-direction variable controls it all.
 
 if $text-direction == ltr
   $default-float    = left
   $default-opposite = right
+
+  $leading-edge     = before
+  $trailing-edge   = after
+
 else
   $default-float    = right
   $default-opposite = left
+
+  $leading-edge     = after
+  $trailing-edge   = before
 
 to-em($px)
   unit(($px / $em-base) * 1em, 'em')

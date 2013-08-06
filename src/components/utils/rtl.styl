@@ -1,0 +1,54 @@
+@import '../global'
+
+float-le()
+  float-{$default-float} arguments
+
+float-te()
+  float-{$default-opposite} arguments
+
+leading-edge()
+  {$default-float} arguments
+
+trailing-edge()
+  {$default-opposite} arguments
+
+float($type, $args...)
+  if $type == 'leading-edge'
+    float $default-float $args
+  else if $type == 'trailing-edge'
+    float $default-opposite $args
+  else
+    float $type $args
+
+padding-le()
+  padding-{$default-float} arguments
+
+padding-te()
+  padding-{$default-opposite} arguments
+
+margin-le()
+  margin-{$default-float} arguments
+
+margin-te()
+  margin-{$default-opposite} arguments
+
+border-le()
+  border-{$default-float} arguments
+
+border-te()
+  border-{$default-opposite} arguments
+
+padding()
+  if length(arguments) == 4 && $default-float == right
+    // test-padding arguments[0] arguments[3] arguments[2] arguments[1]
+    // use-rem-if-enabled('test2-padding', 0 10px 0 10px)
+    use-rem-if-enabled('padding', arguments[0] arguments[3] arguments[2] arguments[1])
+  else
+    use-rem-if-enabled('padding', arguments)
+
+margin()
+  if length(arguments) == 4 && $default-float == right
+    use-rem-if-enabled('margin', arguments[0] arguments[3] arguments[2] arguments[1])
+  else
+    use-rem-if-enabled('margin', arguments)
+

@@ -11,10 +11,17 @@ flex-version ?= box flex
 //    - http://www.w3.org/TR/css3-flexbox/#flex-containers
 //
 display(type, args...)
-  if flex == type || inline-flex == type
+  if type == flex || type == inline-flex
     display vendor-value(box args, only: moz webkit) if box in flex-version
     display -ms-flexbox
     display vendor-value(arguments, only: webkit official) if flex in flex-version // overwrites old webkit
+  else if type == inline-block && $support-for-ie
+    display type args
+    *display inline args
+    *zoom 1 args
+  else if type == table && $text-direction == rtl
+    display arguments
+    direction $text-direction
   else
     display arguments
 

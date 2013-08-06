@@ -1,0 +1,142 @@
+@import '../global'
+
+font-url(file)
+  '../fonts/' + file
+
+font-url2(file)
+  '/fonts/' + file
+
+// gen-font-face($name, $style, $weight)
+//   @font-face
+//     font-family $name
+//     // font-style $style
+//     // font-weight $weight
+//     // src local('?'), url(font-url($name + '.woff')) format('woff'), url(font-url($name + '.ttf')) format('truetype')
+//     // url(font-url($name + '.eot?')) format('eot'), url(font-url($name + '.woff')) format('woff'), url(font-url($name + '.otf')) format('otf'), url(font-url($name + '.ttf')) format('truetype'), url(font-url($name + '.svg')) format('svg')
+
+//     src url(font-url($name + '.eot'))
+//     src url(font-url($name + '.woff')) format('woff'),url(font-url($name + '.ttf')) format('truetype'),url(font-url($name + '.svg#' + $name)) format('svg')
+//     // src: url(font-url($name + '.eot?#iefix')) format('embedded-opentype'),
+//     // font-weight normal
+//     // font-style normal
+
+
+gen-font-face($name)
+  @font-face
+    font-family s("'" + $name + "'")
+    src url(font-url($name + '.eot'))
+    src url(font-url($name + '.eot?#iefix')) format('embedded-opentype'),
+      url(font-url($name + '.woff')) format('woff'),
+      url(font-url($name + '.ttf'))  format('truetype'),
+      url(font-url($name + '.svg#' + $name)) format('svg')
+
+    font-style normal
+    font-weight normal
+
+size(value)
+  round(value / 1.5, 3)
+
+remToPx($value)
+  unit(round($value * 11.36, 3), 'px')
+
+pxToRem($value)
+  unit(round($value / 11.36, 3), 'rem')
+
+mobileSize(value)
+  round(value / 2, 3)
+
+addPxToRem($property, $args)
+  $buf     = ()
+  $toRem   = false
+  $raw     = false
+  $setRaw  = false
+  $newArgs = $args
+
+  if typeof($args[0]) == 'boolean' and $args[0] is false
+    $temp    = shift($args)
+    $newArgs = $args
+    $raw     = true
+
+  for $arg, $i in $newArgs
+    $value = $arg
+
+    if $raw is false
+      if typeof($arg) == 'unit'
+        if unit($arg) == 'rem'
+          $value = remToPx($value)
+
+        if unit($arg) == 'px'
+          $value = pxToRem($value)
+          $toRem = true
+
+    push($buf, $value)
+
+  if $buf and $toRem is false and $raw is false
+    if $buf is not $newArgs
+      {$property} $buf
+
+  {$property} $newArgs
+
+  if $buf and $toRem and $raw is false
+    if $buf is not $newArgs
+      {$property} $buf
+
+use-rem-if-enabled($property, arguments)
+  if $use-rem
+    addPxToRem($property, arguments)
+  else
+    $args = arguments
+    if typeof($args[0]) == 'boolean' and $args[0] is false
+      $temp = shift($args)
+    {$property} $args
+
+font-size()
+  use-rem-if-enabled('font-size', arguments)
+
+width()
+  use-rem-if-enabled('width', arguments)
+
+height()
+  use-rem-if-enabled('height', arguments)
+
+top()
+  use-rem-if-enabled('top', arguments)
+
+bottom()
+  use-rem-if-enabled('bottom', arguments)
+
+left()
+  use-rem-if-enabled('left', arguments)
+
+right()
+  use-rem-if-enabled('right', arguments)
+
+line-height()
+  use-rem-if-enabled('line-height', arguments)
+
+padding-left()
+  use-rem-if-enabled('padding-left', arguments)
+
+padding-right()
+  use-rem-if-enabled('padding-right', arguments)
+
+padding-top()
+  use-rem-if-enabled('padding-top', arguments)
+
+padding-bottom()
+  use-rem-if-enabled('padding-bottom', arguments)
+
+margin-left()
+  use-rem-if-enabled('margin-left', arguments)
+
+margin-right()
+  use-rem-if-enabled('margin-right', arguments)
+
+margin-top()
+  use-rem-if-enabled('margin-top', arguments)
+
+margin-bottom()
+  use-rem-if-enabled('margin-bottom', arguments)
+
+background-size()
+  use-rem-if-enabled('background-size', arguments)
