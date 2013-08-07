@@ -18,7 +18,10 @@ $icon-base-te
 responsi-icon-base($where, $name, $font-size = false, $line-height = false)
   &:{$where}
     @extend $icon-base
-    @extend $icon-base-le
+    if $where == $leading-edge
+      @extend $icon-base-le
+    else
+      @extend $icon-base-te
     // @extend $icon-{$name}
     content responsi-get-icon-content($name)
 
