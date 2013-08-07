@@ -15,8 +15,8 @@ $icon-base-te
   *margin-{$default-opposite} .3em
   padding-{$default-opposite} .6rem
 
-icon-le($name, $font-size = false, $line-height = false)
-  &:{$leading-edge}
+responsi-icon-base($where, $name, $font-size = false, $line-height = false)
+  &:{$where}
     @extend $icon-base
     @extend $icon-base-le
     // @extend $icon-{$name}
@@ -32,22 +32,17 @@ icon-le($name, $font-size = false, $line-height = false)
     else
       line-height inherit
 
+icon-le($name, $font-size = false, $line-height = false)
+  responsi-icon-base($leading-edge, $name, $font-size, $line-height)
+
 icon-te($name, $font-size = false, $line-height = false)
-  &:{$trailing-edge}
-    @extend $icon-base
-    @extend $icon-base-te
-    // @extend $icon-{$name}
-    content responsi-get-icon-content($name)
+  responsi-icon-base($trailing-edge, $name, $font-size, $line-height)
 
-    if $font-size
-      font-size $font-size
-    else
-      font-size inherit
+icon-before($name, $font-size = false, $line-height = false)
+  responsi-icon-base('before', $name, $font-size, $line-height)
 
-    if $line-height
-      line-height $line-height
-    else
-      line-height inherit
+icon-after($name, $font-size = false, $line-height = false)
+  responsi-icon-base('after', $name, $font-size, $line-height)
 
 $icon-glass
   content "\f000"
