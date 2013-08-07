@@ -1,0 +1,77 @@
+@import 'global'
+// Table Variables
+//
+
+// These control the background color for the table and even rows
+$responsi-table-bg ?=               #fff
+$responsi-table-even-row-bg ?=      #f9f9f9
+
+// These control the table cell border style
+$responsi-table-border-style ?=     solid
+$responsi-table-border-size ?=      1px
+$responsi-table-border-color ?=     #ddd
+
+// These control the table head styles
+$responsi-table-head-bg ?=          #f5f5f5
+$responsi-table-head-font-size ?=   to-em(14px)
+$responsi-table-head-font-color ?=  #222
+$responsi-table-head-font-weight ?= bold
+$responsi-table-head-padding ?=     to-em(8px) to-em(10px) to-em(10px)
+
+// These control the row padding and font styles
+$responsi-table-row-padding ?=      to-em(9px) to-em(10px)
+$responsi-table-row-font-size ?=    to-em(14px)
+$responsi-table-row-font-color ?=   #222
+$responsi-table-line-height ?=      to-em(18px)
+
+// These are for controlling the display and margin of tables
+$responsi-table-display ?=          table-cell
+$responsi-table-margin-bottom ?=    to-em(20px)
+
+
+//
+// Table Mixin
+//
+responsi-table()
+  background: $responsi-table-bg
+  margin-bottom: $responsi-table-margin-bottom
+  border: $responsi-table-border-style $responsi-table-border-size $responsi-table-border-color
+
+  thead,
+  tfoot
+    background: $responsi-table-head-bg
+    font-weight: $responsi-table-head-font-weight
+
+    tr
+      th,
+      td
+        padding: $responsi-table-head-padding
+        font-size: $responsi-table-head-font-size
+        color: $responsi-table-head-font-color
+        text-align: left
+
+  tr
+    th,
+    td
+      padding: $responsi-table-row-padding
+      font-size: $responsi-table-row-font-size
+      color: $responsi-table-row-font-color
+
+    &.even,
+    &.alt,
+    &:nth-of-type(even)
+      background: $responsi-table-even-row-bg
+
+  thead tr th,
+  tfoot tr th,
+  tbody tr td,
+  tr td,
+  tfoot tr td
+    display: $responsi-table-display
+    line-height: $responsi-table-line-height
+
+/* Tables */
+if $is-prototype
+  table {
+    responsi-table()
+  }

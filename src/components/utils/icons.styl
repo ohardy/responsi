@@ -19,7 +19,8 @@ icon-le($name, $font-size = false, $line-height = false)
   &:{$leading-edge}
     @extend $icon-base
     @extend $icon-base-le
-    @extend $icon-{$name}
+    // @extend $icon-{$name}
+    content responsi-get-icon-content($name)
 
     if $font-size
       font-size $font-size
@@ -35,7 +36,8 @@ icon-te($name, $font-size = false, $line-height = false)
   &:{$trailing-edge}
     @extend $icon-base
     @extend $icon-base-te
-    @extend $icon-{$name}
+    // @extend $icon-{$name}
+    content responsi-get-icon-content($name)
 
     if $font-size
       font-size $font-size
