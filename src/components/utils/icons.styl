@@ -8,24 +8,24 @@ $icon-base
   -webkit-font-smoothing antialiased
 
 $icon-base-left
-  *margin-left .3em
-  padding-left .6rem
+  *margin-left 3px
+  padding-left 6px
 
 $icon-base-right
-  *margin-right .3em
-  padding-right .6rem
+  *margin-right 3px
+  padding-right 6px
 
 responsi-icon-base($where, $name, $font-size = false, $line-height = false)
   &:{$where}
     @extend $icon-base
     if $where == after
       // @extend $icon-base-left
-      *margin-{$default-float} .3em
-      padding-{$default-float} .6rem
+      *margin-{$default-float} 3px
+      padding-{$default-float} 6px
     else
       // @extend $icon-base-right
-      *margin-{$default-opposite} .3em
-      padding-{$default-opposite} .6rem
+      *margin-{$default-opposite} 3px
+      padding-{$default-opposite} 6px
     // @extend $icon-{$name}
     content responsi-get-icon-content($name)
 
