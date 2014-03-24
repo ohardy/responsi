@@ -1,0 +1,50 @@
+@import 'global'
+
+$responsi-button-font-family ?= Century-Gothic-Bold
+$responsi-button-font-size   ?= 12px
+$responsi-button-text-align  ?= center
+$responsi-button-cursor      ?= pointer
+
+
+responsi-button($color, $background-color, $height, $icon = false, $icon-position = false)
+  border-radius 0
+  appearance none
+
+  border  0
+  margin  0
+  padding 0
+  width   100%
+  display block
+
+  background-color $background-color
+  color            $color
+  height           $height
+  line-height      $height
+
+  font-family $responsi-button-font-family
+  font-size   $responsi-button-font-size
+  text-align  $responsi-button-text-align
+  cursor      $responsi-button-cursor
+
+  if $icon
+    // if $icon-position == left
+    padding-left 5px
+    // else
+    padding-right 5px
+
+    &:before
+      content ''
+      background transparent url($icon) no-repeat $icon-position center
+      background-size auto 20px
+      display inline-block
+      width ($height / 2)
+      height ($height / 2)
+      position relative
+      top 5px
+
+      if $icon-position == left
+        margin-right 10px
+      else
+        margin-left 10px
+
+  {block}
