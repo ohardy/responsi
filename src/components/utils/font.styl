@@ -20,8 +20,10 @@ font-url2(file)
 //     // font-weight normal
 //     // font-style normal
 
+$fonts = {}
 
 gen-font-face($name)
+  $fonts[name] = false
   @font-face
     font-family s("'" + $name + "'")
     src url(font-url($name + '.eot'))
@@ -32,6 +34,15 @@ gen-font-face($name)
 
     font-style normal
     font-weight normal
+
+font-family()
+  $fonts[arguments] = true
+  font-family arguments
+
+print-not-used-fonts()
+  for font in $fonts
+    unless $fonts[font]
+      p(font)
 
 size(value)
   round(value / 1.5, 3)

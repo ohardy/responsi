@@ -1,7 +1,7 @@
 @import 'global'
 
-$responsi-button-font-family ?= Century-Gothic-Bold
-$responsi-button-font-size   ?= 12px
+$responsi-button-font-family ?= $responsi-main-font
+$responsi-button-font-size   ?= $responsi-main-font-size
 $responsi-button-text-align  ?= center
 $responsi-button-cursor      ?= pointer
 
@@ -16,8 +16,10 @@ responsi-button($color, $background-color, $height, $icon = false, $icon-positio
   width   100%
   display block
 
-  background-color $background-color
-  color            $color
+  if $background-color
+    background-color $background-color
+  if $color
+    color $color
   height           $height
   line-height      $height
 

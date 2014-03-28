@@ -1,0 +1,45 @@
+@import 'global'
+
+$responsi-table-fixed
+  table-layout fixed
+
+$responsi-table-auto
+  table-layout auto
+
+$responsi-table
+  display table
+  width 100%
+
+$table-fixed-100
+  @extend $responsi-table
+  @extend $responsi-table-fixed
+
+$table-auto-100
+  @extend $responsi-table
+  @extend $responsi-table-auto
+
+$table-cell
+  display table-cell
+
+$table-cell-50
+  @extend $table-cell
+  width 50%
+
+$table-cell-middle
+  @extend $table-cell
+  vertical-align middle
+
+$table-cell-top
+  @extend $table-cell
+  vertical-align top
+
+$responsi-flex
+  display flex
+
+$responsi-flex-center
+  align-items center
+
+$responsi-flex-justify-center
+  justify-content: center
+
+// responsi-extend-table(layout, size)
