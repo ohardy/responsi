@@ -45,7 +45,7 @@ percentage(first, second)
 
 // Creating rems and pixels
 rem-calc($pxWidth)
-  @return $pxWidth / $em-base * 1rem;
+  ($pxWidth / $em-base) * 1rem
 
 // Grid Calculation for Percentages
 gridCalc($colNumber, $totalColumns)
